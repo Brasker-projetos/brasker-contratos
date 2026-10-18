@@ -31,10 +31,17 @@ function mostrarLogin(msg = '') {
 }
 
 async function abrirApp() {
-  const acesso = await svc.meuAcesso();
+  let acesso;
+  try { acesso = await svc.meuAcesso(); } catch (e) {
+    api.sair();
+    if (e.semSessao) return mostrarLogin(e.message);
+    return mostrarLogin(`Login aceito, mas não foi possível consultar o acesso: ${e.message}`);
+  }
   if (!acesso || !acesso.papel) {
     api.sair();
-    return mostrarLogin('Seu login não tem acesso ao Brasker Contratos. Fale com a Tecnologia ou com a liderança do BPO.');
+    const quem = acesso && acesso.email ? ` (${acesso.email})` : '';
+    const motivo = acesso && !acesso.nome ? ' Este e-mail não está cadastrado como usuário ativo do Copilot.' : '';
+    return mostrarLogin(`Seu login${quem} não tem acesso ao Brasker Contratos.${motivo} Fale com a Tecnologia ou com a liderança do BPO.`);
   }
   estado.papel = acesso.papel;
   $('#usuario-nome').textContent = acesso.nome || acesso.email;
