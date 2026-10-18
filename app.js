@@ -23,7 +23,19 @@ const tentar = (fn) => async (...a) => {
 };
 
 // ---------- Login ----------
+// Mostrar/ocultar a senha. Volta sempre a ficar oculta ao entrar ou sair (computador compartilhado).
+function verSenha(mostrar) {
+  $('#login-senha').type = mostrar ? 'text' : 'password';
+  const b = $('#ver-senha');
+  b.setAttribute('aria-pressed', String(mostrar));
+  b.setAttribute('aria-label', mostrar ? 'Ocultar senha' : 'Mostrar senha');
+  b.title = mostrar ? 'Ocultar senha' : 'Mostrar senha';
+  $('#icone-olho').classList.toggle('oculta', mostrar);
+  $('#icone-olho-fechado').classList.toggle('oculta', !mostrar);
+}
+
 function mostrarLogin(msg = '') {
+  verSenha(false);
   $('#app').classList.add('oculta');
   $('#painel-lateral').classList.add('oculta');
   $('#tela-login').classList.remove('oculta');
@@ -312,11 +324,12 @@ function trocarAba(aba) {
   $('#fechar-lateral').onclick = () => $('#painel-lateral').classList.add('oculta');
   $('#idx-nome').onchange = renderIndices;
   $('#sair').onclick = () => { api.sair(); mostrarLogin(); };
+  $('#ver-senha').onclick = () => verSenha($('#login-senha').type === 'password');
 
   $('#form-login').onsubmit = async (e) => {
     e.preventDefault();
     const b = $('#login-botao'); b.disabled = true; b.textContent = 'Entrando…'; $('#login-erro').textContent = '';
-    try { await api.entrar($('#login-email').value, $('#login-senha').value); $('#login-senha').value = ''; await abrirApp(); }
+    try { await api.entrar($('#login-email').value, $('#login-senha').value); $('#login-senha').value = ''; verSenha(false); await abrirApp(); }
     catch (err) { $('#login-erro').textContent = err.message; }
     finally { b.disabled = false; b.textContent = 'Entrar'; }
   };
