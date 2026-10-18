@@ -1,0 +1,66 @@
+:root {
+  --bg: #f6f7f9; --card: #fff; --txt: #1d2330; --mut: #667085; --linha: #e4e7ec;
+  --pri: #1f5eff; --pri-2: #e8efff; --ok: #12805c; --ok-2: #e6f4ee; --alerta: #b54708; --alerta-2: #fef3e6;
+  --erro: #b42318; --erro-2: #fdecea;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #0f1218; --card: #171b24; --txt: #e6e9ef; --mut: #98a2b3; --linha: #2a303c;
+    --pri: #6e95ff; --pri-2: #1c2640; --ok: #4cc79a; --ok-2: #13291f; --alerta: #f5a35b; --alerta-2: #2e2112; --erro: #f97066; --erro-2: #2d1614; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; font: 14px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--txt); }
+.topo { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; padding: 12px 20px; background: var(--card); border-bottom: 1px solid var(--linha); position: sticky; top: 0; z-index: 5; }
+.marca { font-weight: 700; font-size: 16px; } .marca span { color: var(--pri); font-weight: 600; }
+nav { display: flex; gap: 4px; flex-wrap: wrap; }
+nav button { background: none; border: 0; padding: 8px 12px; border-radius: 8px; color: var(--mut); cursor: pointer; font: inherit; }
+nav button.ativa { background: var(--pri-2); color: var(--pri); font-weight: 600; }
+.controles { margin-left: auto; display: flex; gap: 12px; flex-wrap: wrap; }
+label { display: inline-flex; flex-direction: column; gap: 2px; font-size: 12px; color: var(--mut); }
+input, select, textarea { font: inherit; color: var(--txt); background: var(--card); border: 1px solid var(--linha); border-radius: 8px; padding: 6px 8px; }
+button { font: inherit; cursor: pointer; border-radius: 8px; border: 1px solid var(--pri); background: var(--pri); color: #fff; padding: 6px 12px; }
+button.sec { background: var(--card); color: var(--pri); }
+button:disabled { opacity: .45; cursor: not-allowed; }
+main { padding: 16px 20px 60px; max-width: 1400px; margin: 0 auto; }
+.oculta { display: none !important; }
+.sub { color: var(--mut); margin: 4px 0 12px; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin-bottom: 14px; }
+.kpi { background: var(--card); border: 1px solid var(--linha); border-radius: 12px; padding: 12px; cursor: default; }
+.kpi[data-filtro] { cursor: pointer; } .kpi[data-filtro]:hover { border-color: var(--pri); }
+.kpi b { display: block; font-size: 20px; } .kpi small { color: var(--mut); }
+.kpi.alerta b { color: var(--alerta); } .kpi.ok b { color: var(--ok); }
+.filtros { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; } .filtros input { min-width: 260px; flex: 1; max-width: 420px; }
+.tabela-wrap { overflow-x: auto; background: var(--card); border: 1px solid var(--linha); border-radius: 12px; }
+table { border-collapse: collapse; width: 100%; }
+th, td { padding: 8px 10px; border-bottom: 1px solid var(--linha); text-align: left; white-space: nowrap; }
+th { font-size: 12px; color: var(--mut); font-weight: 600; background: var(--card); position: sticky; top: 0; }
+td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
+tbody tr.clicavel { cursor: pointer; } tbody tr.clicavel:hover { background: var(--pri-2); }
+.tag { display: inline-block; padding: 1px 8px; border-radius: 99px; font-size: 12px; background: var(--linha); color: var(--txt); margin-right: 4px; }
+.tag.ok { background: var(--ok-2); color: var(--ok); } .tag.alerta { background: var(--alerta-2); color: var(--alerta); }
+.tag.erro { background: var(--erro-2); color: var(--erro); } .tag.pri { background: var(--pri-2); color: var(--pri); }
+.pos { color: var(--ok); } .neg { color: var(--erro); }
+.cartao { background: var(--card); border: 1px solid var(--linha); border-radius: 12px; padding: 14px 16px; margin-bottom: 14px; }
+.cartao h2 { margin: 0 0 4px; font-size: 15px; }
+.linha-form { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; }
+.grade-indices { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; margin-top: 10px; }
+.lateral { position: fixed; top: 0; right: 0; bottom: 0; width: min(760px, 100vw); background: var(--card); border-left: 1px solid var(--linha); box-shadow: -8px 0 24px rgba(0,0,0,.12); overflow-y: auto; padding: 18px 20px 40px; z-index: 10; }
+.fechar { position: absolute; right: 14px; top: 10px; background: none; color: var(--mut); border: 0; font-size: 24px; }
+.lateral h2 { margin: 0 0 2px; font-size: 18px; padding-right: 30px; } .lateral h3 { font-size: 14px; margin: 18px 0 6px; }
+.resumo { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin: 12px 0; }
+.resumo div { background: var(--bg); border-radius: 10px; padding: 8px 10px; } .resumo b { display: block; font-size: 16px; }
+.aviso { padding: 8px 10px; border-radius: 8px; margin: 4px 0; background: var(--alerta-2); color: var(--alerta); }
+.aviso.info { background: var(--pri-2); color: var(--pri); }
+textarea { width: 100%; min-height: 220px; font-family: ui-monospace, Consolas, monospace; font-size: 12.5px; }
+.form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+.form-grid label input, .form-grid label select { width: 100%; }
+.acoes { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.toast { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); background: var(--txt); color: var(--bg); padding: 10px 16px; border-radius: 10px; z-index: 20; max-width: 90vw; }
+.evid { color: var(--mut); font-size: 12px; white-space: normal; max-width: 260px; }
+@media (max-width: 640px) { .topo, main { padding-left: 16px; padding-right: 16px; } .controles { margin-left: 0; } }
+.tela-login { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 16px; }
+.login { width: min(380px, 100%); display: flex; flex-direction: column; gap: 12px; padding: 24px; }
+.login label input { width: 100%; }
+.marca.grande { font-size: 22px; }
+.erro { color: var(--erro); min-height: 1.2em; }
+.usuario { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.usuario span:first-child { max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

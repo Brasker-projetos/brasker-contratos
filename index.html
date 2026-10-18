@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Brasker Contratos</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="tela-login" class="tela-login oculta">
+    <form id="form-login" class="cartao login">
+      <div class="marca grande">Brasker <span>Contratos</span></div>
+      <p class="sub">Entre com o mesmo login do Copilot.</p>
+      <label>E-mail <input type="email" id="login-email" autocomplete="username" required></label>
+      <label>Senha <input type="password" id="login-senha" autocomplete="current-password" required></label>
+      <button type="submit" id="login-botao">Entrar</button>
+      <div id="login-erro" class="erro"></div>
+    </form>
+  </div>
+
+  <div id="app" class="oculta">
+    <header class="topo">
+      <div class="marca">Brasker <span>Contratos</span></div>
+      <nav id="abas">
+        <button data-aba="apuracao" class="ativa">Apuração</button>
+        <button data-aba="contratos">Contratos</button>
+        <button data-aba="importacoes">Importações</button>
+        <button data-aba="indices">Índices e regras</button>
+        <button data-aba="equipe" id="aba-btn-equipe" class="oculta">Equipe</button>
+      </nav>
+      <div class="controles">
+        <label>Faturamento <input type="month" id="competencia"></label>
+        <div class="usuario"><span id="usuario-nome"></span><span id="usuario-papel" class="tag"></span><button class="sec" id="sair">Sair</button></div>
+      </div>
+    </header>
+
+    <main>
+      <section id="aba-apuracao" class="aba">
+        <p class="sub" id="sub-apuracao"></p>
+        <div id="kpis" class="kpis"></div>
+        <div class="filtros">
+          <input id="busca" type="search" placeholder="Buscar cliente ou CNPJ">
+          <select id="filtro">
+            <option value="">Todos os contratos ativos</option>
+            <option value="adicionais">Com adicionais</option>
+            <option value="alertas">Com alertas de dados</option>
+            <option value="defasado">Defasados (excedente recorrente)</option>
+            <option value="reajuste">Reajuste no mês</option>
+            <option value="semparam">Sem franquia cadastrada</option>
+            <option value="rascunho">Em rascunho</option>
+          </select>
+        </div>
+        <div class="tabela-wrap"><table id="tabela-apuracao"></table></div>
+      </section>
+
+      <section id="aba-contratos" class="aba oculta">
+        <div class="filtros"><input id="busca-contratos" type="search" placeholder="Buscar contrato"></div>
+        <div class="tabela-wrap"><table id="tabela-contratos"></table></div>
+      </section>
+
+      <section id="aba-importacoes" class="aba oculta">
+        <div class="cartao">
+          <h2>Importar relatório</h2>
+          <p class="sub">Exporte o relatório do Domínio ou do Bauner e envie aqui. A planilha de análise inteira (com as abas "Colar ...") também é aceita. O arquivo é lido no seu computador; só as contagens vão para o banco.</p>
+          <form id="form-import" class="linha-form">
+            <select id="imp-tipo" required></select>
+            <label>Competência (opcional) <input type="month" id="imp-comp"></label>
+            <input type="file" id="imp-arquivo" accept=".xlsx,.xls,.csv" required>
+            <button type="submit" id="imp-botao">Importar</button>
+          </form>
+          <div id="imp-status" class="sub"></div>
+        </div>
+        <div class="cartao">
+          <h2>De-para pendente</h2>
+          <p class="sub">Empresas com volume medido que não foram ligadas a nenhum contrato. Informe o CNPJ do contrato para vincular.</p>
+          <div class="tabela-wrap"><table id="tabela-pendencias"></table></div>
+        </div>
+        <div class="cartao">
+          <h2>Histórico de importações</h2>
+          <div class="tabela-wrap"><table id="tabela-importacoes"></table></div>
+        </div>
+      </section>
+
+      <section id="aba-indices" class="aba oculta">
+        <div class="cartao">
+          <h2>Regras da apuração</h2>
+          <form id="form-config" class="linha-form">
+            <label>Defasagem da medição (meses) <input type="number" id="cfg-defasagem" min="0" max="6"></label>
+            <label>Teto de adicionais por mês (% da base, vazio = sem teto) <input type="number" id="cfg-teto" min="0" step="1"></label>
+            <label>Meses seguidos para "defasado" <input type="number" id="cfg-min" min="1" max="12"></label>
+            <button type="submit">Salvar regras</button>
+          </form>
+        </div>
+        <div class="cartao">
+          <h2>Índices de reajuste (% ao mês)</h2>
+          <form id="form-indices">
+            <div class="linha-form"><select id="idx-nome"><option>INPC</option><option>IGP-M</option></select><button type="submit">Salvar índices</button></div>
+            <div id="grade-indices" class="grade-indices"></div>
+          </form>
+        </div>
+      </section>
+
+      <section id="aba-equipe" class="aba oculta">
+        <div class="cartao">
+          <h2>Quem acessa o Brasker Contratos</h2>
+          <p class="sub">Administrador: opera e gerencia a equipe. Editor: importa, edita contratos, ajusta, aprova e finaliza. Visualizador: só acompanha. Só aparecem pessoas com login ativo no Copilot.</p>
+          <div class="tabela-wrap"><table id="tabela-equipe"></table></div>
+        </div>
+        <div class="cartao">
+          <h2>Dar acesso</h2>
+          <form id="form-equipe" class="linha-form">
+            <select id="eq-pessoa" required></select>
+            <select id="eq-papel" required>
+              <option value="editor">Editor</option>
+              <option value="visualizador">Visualizador</option>
+              <option value="administrador">Administrador</option>
+            </select>
+            <button type="submit">Liberar acesso</button>
+          </form>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <aside id="painel-lateral" class="lateral oculta" aria-live="polite">
+    <button class="fechar" id="fechar-lateral" aria-label="Fechar">×</button>
+    <div id="conteudo-lateral"></div>
+  </aside>
+  <div id="toast" class="toast oculta"></div>
+
+  <script src="vendor/xlsx.full.min.js"></script>
+  <script src="lib/catalog.js"></script>
+  <script src="lib/engine.js"></script>
+  <script src="lib/parsers.js"></script>
+  <script src="lib/api.js"></script>
+  <script src="lib/servico.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
