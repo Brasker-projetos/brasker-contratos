@@ -94,7 +94,7 @@ function renderApuracao() {
       <td class="n">${brl(l.ultimoValorCobrado)}</td>
       <td class="n ${l.variacao > 0 ? 'pos' : l.variacao < 0 ? 'neg' : ''}">${l.variacao == null ? '–' : brl(l.variacao)}</td>
       <td>${!l.parametrizado ? '<span class="tag alerta">sem franquia</span>' : ''}${l.defasado ? '<span class="tag erro">defasado</span>' : ''}${l.reajuste ? '<span class="tag pri">reajuste</span>' : ''}${l.alertasDados ? `<span class="tag alerta">${l.alertasDados} alerta(s)</span>` : ''}</td>
-      <td><span class="tag ${STATUS_TAG[l.status]}">${l.status}</span></td></tr>`).join('') || '<tr><td colspan="10" class="sub">Nenhum contrato neste filtro. Faça a carga inicial da planilha de contratos na aba Importações.</td></tr>'
+      <td><span class="tag ${STATUS_TAG[l.status] || ''}">${esc(l.status)}</span></td></tr>`).join('') || '<tr><td colspan="10" class="sub">Nenhum contrato neste filtro. Faça a carga inicial da planilha de contratos na aba Importações.</td></tr>'
   }</tbody>`;
   document.querySelectorAll('#tabela-apuracao tr.clicavel').forEach((tr) => tr.onclick = tentar(() => abrirDetalhe(tr.dataset.id)));
 }
@@ -108,7 +108,7 @@ async function abrirDetalhe(id) {
   $('#conteudo-lateral').innerHTML = `
     <h2>${esc(c.nome)}</h2>
     <div class="sub">${cnpjFmt(c.cnpj)} · ${esc(c.plano || '')} · ${esc(c.processo || 'processo não informado')} · índice ${esc(c.indice || '–')}</div>
-    <div class="sub">Faturamento ${a.competencia} · medição ${r.competenciaMedicao} · versão do contrato desde ${r.versaoVigencia || '–'} · <span class="tag ${STATUS_TAG[a.status]}">${a.status}</span></div>
+    <div class="sub">Faturamento ${esc(a.competencia)} · medição ${esc(r.competenciaMedicao)} · versão do contrato desde ${esc(r.versaoVigencia || '–')} · <span class="tag ${STATUS_TAG[a.status] || ''}">${esc(a.status)}</span></div>
     <div class="resumo">
       <div><small>Base</small><b>${brl(r.valorBase)}</b></div>
       <div><small>Adicionais</small><b>${brl(r.adicionais)}</b></div>
@@ -125,19 +125,19 @@ async function abrirDetalhe(id) {
     <div class="tabela-wrap"><table><thead><tr><th>Métrica</th><th class="n">Contratado</th><th class="n">Medido</th><th class="n">Lote</th><th class="n">Lotes c/m</th><th class="n">Exced.</th><th class="n">Preço</th><th class="n">Valor</th><th>Situação</th><th>Evidência</th></tr></thead><tbody>
     ${linhas.map((l) => { const [cls, txt] = STATUS_LINHA[l.status] || ['', l.status]; return `<tr>
       <td>${esc(l.rotulo)}${l.premissa ? ' <span class="tag alerta" title="' + esc(l.premissa) + '">premissa</span>' : ''}</td>
-      <td class="n">${l.contratado ?? '–'}</td><td class="n">${l.medido ?? '–'}</td><td class="n">${l.lote ?? '–'}</td>
-      <td class="n">${l.lotesContratados ?? '–'} / ${l.lotesMedidos ?? '–'}</td><td class="n">${l.excedente || '–'}</td>
+      <td class="n">${esc(l.contratado ?? '–')}</td><td class="n">${esc(l.medido ?? '–')}</td><td class="n">${esc(l.lote ?? '–')}</td>
+      <td class="n">${esc(l.lotesContratados ?? '–')} / ${esc(l.lotesMedidos ?? '–')}</td><td class="n">${esc(l.excedente || '–')}</td>
       <td class="n">${l.precoUnit != null ? brl(l.precoUnit) + (l.origemPreco === 'contrato' ? '*' : '') : '–'}</td>
-      <td class="n">${l.valor ? `<b>${brl(l.valor)}</b>` : '–'}</td><td><span class="tag ${cls}">${txt}</span></td>
+      <td class="n">${l.valor ? `<b>${brl(l.valor)}</b>` : '–'}</td><td><span class="tag ${cls}">${esc(txt)}</span></td>
       <td class="evid">${esc(l.fonte || '')}${l.evidencia ? ': ' + esc(l.evidencia) : ''}</td></tr>`; }).join('') || '<tr><td colspan="10" class="sub">Sem franquias nem medições para este contrato.</td></tr>'}
     </tbody></table></div>
     <small class="sub">* preço negociado no contrato. Lotes c/m = lotes contratados / medidos (mínimo 1 lote, arredondado para cima).</small>
     <h3>Últimos 6 meses (calculado)</h3>
-    <div class="sub">${historico.map((h) => `${h.comp}: ${brl(h.total)}${h.adicionais ? ` (+${brl(h.adicionais)})` : ''}`).join(' · ')}</div>
+    <div class="sub">${historico.map((h) => `${esc(h.comp)}: ${brl(h.total)}${h.adicionais ? ` (+${brl(h.adicionais)})` : ''}`).join(' · ')}</div>
     <h3>Pré-fatura</h3>
     <div class="linha-form">
-      <label>Valor final negociado <input type="number" step="0.01" id="valor-final" value="${a.valorFinal ?? ''}" placeholder="${r.total}" ${ro || a.status !== 'rascunho' ? 'disabled' : ''}></label>
-      <label style="flex:1">Observação / motivo <input id="obs" value="${esc(a.observacao || '')}" ${ro || a.status !== 'rascunho' ? 'disabled' : ''}></label>
+      <label>Valor final negociado <input type="number" step="0.01" id="valor-final" value="${esc(a.valorFinal ?? '')}" placeholder="${esc(r.total)}" ${ro || a.status !== 'rascunho' ? 'disabled' : ''}></label>
+      <label class="cresce">Observação / motivo <input id="obs" value="${esc(a.observacao || '')}" ${ro || a.status !== 'rascunho' ? 'disabled' : ''}></label>
     </div>
     <div class="acoes">
       ${!ro && a.status === 'rascunho' ? '<button class="sec" data-acao="ajustar">Salvar ajuste</button><button data-acao="aprovar">Aprovar pré-fatura</button>' : ''}
@@ -145,7 +145,7 @@ async function abrirDetalhe(id) {
       <button class="sec" id="btn-comunicado">Gerar comunicado ao cliente</button>
     </div>
     <div id="area-comunicado"></div>
-    ${a.historico.length ? `<h3>Histórico</h3><div class="sub">${a.historico.map((h) => `${String(h.em).slice(0, 16).replace('T', ' ')} · ${esc(h.por)} · ${esc(h.acao)}${h.valor != null ? ' ' + brl(h.valor) : ''}${h.observacao ? ' — ' + esc(h.observacao) : ''}`).join('<br>')}</div>` : ''}`;
+    ${a.historico.length ? `<h3>Histórico</h3><div class="sub">${a.historico.map((h) => `${esc(String(h.em).slice(0, 16).replace('T', ' '))} · ${esc(h.por)} · ${esc(h.acao)}${h.valor != null ? ' ' + brl(h.valor) : ''}${h.observacao ? ' — ' + esc(h.observacao) : ''}`).join('<br>')}</div>` : ''}`;
   $('#painel-lateral').classList.remove('oculta');
   document.querySelectorAll('[data-acao]').forEach((b) => b.onclick = tentar(async () => {
     b.disabled = true;
@@ -185,7 +185,7 @@ function editarContrato(id) {
   const sel = (idc, ops, val) => `<select id="${idc}" ${ro}><option value=""></option>${ops.map((o) => `<option ${o === val ? 'selected' : ''}>${esc(o)}</option>`).join('')}</select>`;
   const chavesPreco = [...new Set([...Object.keys(estado.config.tabela_precos || {}), 'funcionario_unitario'])];
   $('#conteudo-lateral').innerHTML = `
-    <h2>${esc(c.nome)}</h2><div class="sub">#${esc(c.id)} · ${c.versoes.length} versão(ões): ${c.versoes.map((x) => `${x.vigenciaInicio} (${brl(x.valorBase)})`).join(', ')}</div>
+    <h2>${esc(c.nome)}</h2><div class="sub">#${esc(c.id)} · ${c.versoes.length} versão(ões): ${c.versoes.map((x) => `${esc(x.vigenciaInicio)} (${brl(x.valorBase)})`).join(', ')}</div>
     <h3>Cadastro</h3><div class="form-grid">
       <label>Nome <input id="c-nome" value="${esc(c.nome)}" ${ro}></label>
       <label>CNPJ <input id="c-cnpj" value="${esc(c.cnpj || '')}" ${ro}></label>
@@ -198,17 +198,17 @@ function editarContrato(id) {
     </div>
     <h3>Versão vigente (desde ${esc(v.vigenciaInicio)})</h3>
     <div class="form-grid">
-      <label>Valor base (R$) <input type="number" step="0.01" id="v-base" value="${v.valorBase ?? ''}" ${ro}></label>
+      <label>Valor base (R$) <input type="number" step="0.01" id="v-base" value="${esc(v.valorBase ?? '')}" ${ro}></label>
       <label>Nova versão a partir de <input type="month" id="v-nova" ${ro}><small>vazio = editar a versão atual</small></label>
     </div>
     <h3>Franquias contratadas</h3><div class="form-grid">
-      ${Object.entries(svc.METRICAS).map(([k, mt]) => `<label>${esc(mt.rotulo)}${mt.cobrada ? '' : ' (monitorada)'} <input type="number" data-fr="${k}" value="${v.franquias?.[k] ?? ''}" ${ro}></label>`).join('')}
+      ${Object.entries(svc.METRICAS).map(([k, mt]) => `<label>${esc(mt.rotulo)}${mt.cobrada ? '' : ' (monitorada)'} <input type="number" data-fr="${esc(k)}" value="${esc(v.franquias?.[k] ?? '')}" ${ro}></label>`).join('')}
     </div>
     <h3>Preços negociados (vazio = tabela padrão)</h3><div class="form-grid">
-      ${chavesPreco.map((k) => `<label>${esc(k.replace(/_/g, ' '))} <input type="number" step="0.01" data-pr="${k}" value="${v.precos?.[k] ?? ''}" ${ro}></label>`).join('')}
+      ${chavesPreco.map((k) => `<label>${esc(k.replace(/_/g, ' '))} <input type="number" step="0.01" data-pr="${esc(k)}" value="${esc(v.precos?.[k] ?? '')}" ${ro}></label>`).join('')}
     </div>
     <h3>Descontos (um por linha: pct|valor; valor; início AAAA-MM; fim AAAA-MM opcional; motivo)</h3>
-    <textarea id="c-desc" style="min-height:80px" ${ro}>${esc((c.descontos || []).map((d) => [d.tipo, d.valor, d.inicio, d.fim || '', d.motivo || ''].join('; ')).join('\n'))}</textarea>
+    <textarea id="c-desc" class="baixo" ${ro}>${esc((c.descontos || []).map((d) => [d.tipo, d.valor, d.inicio, d.fim || '', d.motivo || ''].join('; ')).join('\n'))}</textarea>
     ${ro ? '' : '<div class="acoes"><button id="salvar-contrato">Salvar contrato</button></div>'}`;
   $('#painel-lateral').classList.remove('oculta');
   if (ro) return;
@@ -269,7 +269,9 @@ async function carregarEquipe() {
     membros.map((m) => `<tr><td><b>${esc(m.nome)}</b><br><small class="sub">${esc(m.email)}</small></td><td>${esc(m.departamento || '–')}</td>
       <td><span class="tag ${m.papel === 'administrador' ? 'pri' : m.papel === 'editor' ? 'ok' : ''}">${PAPEL_ROTULO[m.papel]}</span></td>
       <td>${m.origem === 'individual' ? 'Liberado individualmente' : 'Regra do departamento'}</td>
-      <td><button class="sec" data-tirar="${esc(m.usuario_id)}" data-nome="${esc(m.nome)}">Remover acesso</button></td></tr>`).join('')
+      <td>${m.origem === 'departamento' && m.papel === 'administrador'
+        ? '<span class="tag" title="Administrador pela regra do departamento: só a Tecnologia altera">Protegido</span>'
+        : `<button class="sec" data-tirar="${esc(m.usuario_id)}" data-nome="${esc(m.nome)}">Remover acesso</button>`}</td></tr>`).join('')
   }</tbody>`;
   $('#eq-pessoa').innerHTML = `<option value="">Escolha a pessoa (login do Copilot)</option>${candidatos.map((c) => `<option value="${esc(c.usuario_id)}">${esc(c.nome)} — ${esc(c.departamento || 'sem setor')}</option>`).join('')}`;
   document.querySelectorAll('[data-tirar]').forEach((b) => b.onclick = tentar(async () => {
@@ -288,6 +290,11 @@ function trocarAba(aba) {
 }
 
 (function init() {
+  // Contra clickjacking: o Pages não envia frame-ancestors/X-Frame-Options, então o app se recusa a abrir dentro de iframe.
+  if (window.top !== window.self) {
+    document.body.textContent = 'Abra o Brasker Contratos diretamente pelo endereço oficial.';
+    return;
+  }
   const hoje = new Date();
   $('#competencia').value = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}`;
   $('#imp-tipo').innerHTML = `<option value="contratos">Planilha Gestão de Contratos (carga inicial)</option>${Object.entries(PARSERS).map(([k, v]) => `<option value="${k}">${esc(v.rotulo)}</option>`).join('')}`;

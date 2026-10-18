@@ -64,3 +64,5 @@ textarea { width: 100%; min-height: 220px; font-family: ui-monospace, Consolas, 
 .erro { color: var(--erro); min-height: 1.2em; }
 .usuario { display: flex; align-items: center; gap: 8px; font-size: 13px; }
 .usuario span:first-child { max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cresce { flex: 1; }
+textarea.baixo { min-height: 80px; }
